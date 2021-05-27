@@ -1,0 +1,59 @@
+---
+title: "Tarea 3"
+author: "Yanely Luna Gutiérrez"
+date: "27/5/2021"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+```
+
+## Ejercicio 1
+
+Supongamos que la llegada de autos a la caseta de cobro de una autopista los días viernes de 5
+a 8 p.m. se puede modelar mediante la familia paramétrica Poisson. Hacemos dos preguntas
+al encargado de la caseta:
+
++ ¿Como cuántos autos llegan en promedio por minuto a la caseta? A lo cual nos responde
+que 5.
+
++ Tomando en cuenta que el dato anterior es una apreciación subjetiva ¿Cuál cree usted
+que sería en el mayor de los casos el número promedio de autos por minuto? A lo cual
+nos responde que 12.
+
+a) Utilizando una distribución conjugada especifique la distribución a priori del parámetro
+con base en la informacion que se tiene. Calcule el valor esperado del parámetro así
+como la probabilidad de que dicho parametro sea mayor a 8.
+
+Para facilidad de los cálculos podemos suponer que el parámetro de interés $\lambda$ sigue una distribución $\Gamma(a,b)$ ya que es la distribución conjugada de una Poisson.
+
+Según la información proporcionada, $$E(\Lambda) = 5$$ y podemos interpretar la segunda respuesta como que $$P(\lambda \geq 12) = 0.05$$. Entonces tenemos que $$E(\lambda) = \frac{a}{b} = 5 \Rightarrow a = 5b$$ 
+ y $$F_{\lambda}(12) = 0.95 \Rightarrow \int_{0}^{12}\frac{(b\lambda)^{a-1}}{\Gamma(a)}be^{-b\lambda}d\lambda = 0.95$$
+ $$\Rightarrow \int_{0}^{12}\frac{(b\lambda)^{5b-1}}{\Gamma(5b)}be^{-b\lambda}d\lambda = 0.95$$
+```{r ej1,echo=TRUE}
+# Tenemos que aproximar el cero de la siguiente función:
+aux <- function(b){
+  a <- 5*b
+  return(pgamma(12,shape = a, rate = b)-0.95)
+}
+# Graficamos la función para encontrar el intervalo donde cruza el cero
+x <- seq(0.01,4,by=0.01)
+ggplot(data.frame(x=x,y=aux(x)),aes(x=x,y=y)) + geom_line(color="blue") +
+  theme_bw()
+
+# Parámetros estimados
+(b_hat <- uniroot(aux,interval = c(0,0.5))$root)
+(a_hat <- 5*b_hat)
+
+# Comprobamos que la probabilidad con estos parámetros es cercana a 0.95
+pgamma(12,shape = a_hat, rate = b_hat)
+# Y la esperanza es 5
+a_hat/b_hat
+```
+Entonces, los parámetros son $a=$ `r a_hat` y $b=$ `r b_hat`, por lo que $\lambda \sim Gamma(1.927,0.385)$ y $E(\lambda) = 5$. Entonces, $$P(\lambda \geq 8) = 1- F_{\lambda}(8) = $$ `r 1-pgamma(8,shape=1.927,rate=0.385)` 
+
+
