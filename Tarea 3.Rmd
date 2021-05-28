@@ -14,9 +14,7 @@ library(ggplot2)
 
 ## Ejercicio 1
 
-Supongamos que la llegada de autos a la caseta de cobro de una autopista los días viernes de 5
-a 8 p.m. se puede modelar mediante la familia paramétrica Poisson. Hacemos dos preguntas
-al encargado de la caseta:
+Supongamos que la llegada de autos a la caseta de cobro de una autopista los días viernes de 5 a 8 p.m. se puede modelar mediante la familia paramétrica Poisson. Hacemos dos preguntas al encargado de la caseta:
 
 + ¿Como cuántos autos llegan en promedio por minuto a la caseta? A lo cual nos responde
 que 5.
@@ -56,4 +54,19 @@ a_hat/b_hat
 ```
 Entonces, los parámetros son $a=$ `r a_hat` y $b=$ `r b_hat`, por lo que $\lambda \sim Gamma(1.927,0.385)$ y $E(\lambda) = 5$. Entonces, $$P(\lambda \geq 8) = 1- F_{\lambda}(8) = $$ `r 1-pgamma(8,shape=1.927,rate=0.385)` 
 
+b) Supongamos ahora que procedemos a tomar una muestra aleatoria y obtenemos $x = (679; 703; 748; 739; 693)$. Obtenga la distribución a posteriori del parámetro y calcule el valor esperado del parámetro así como la probabilidad de que dicho parámetro sea mayor a 8. 
+
+La muestra observada es del número de autos que pasan entre las 5 y 8 pm, por lo que tenemos que convertirla a autos por minuto (entre 180):
+
+$x = (679; 703; 748; 739; 693) = (3.772;3.905;4.155;4.105;3.85)$
+```{r}
+x <- c(679,703,748,739,693)
+x <- x/180
+```
+La distribución posterior es $\lambda|x \sim Gamma(a + \sum_{i=1}^n X_i, b + n)$. En este caso $n=$5
+$$\Rightarrow a + \sum_{i=1}^n X_i = 1.927 + 3.772+3.905+4.155+4.105+3.85 = $$
+`r a_hat + sum(x)`
+$$b+n = 0.385 + 5 = 5.385$$
+Entonces $$E(\lambda|X) = \frac{a + \sum_{i=1}^n X_i}{b+n}=\frac{21.716}{5.385} = 4.033$$
+Compare con el inciso a). Grafique en una misma hoja la distribución a priori, la distribución a posteriori con el primer dato, con los primeros dos y así sucesivamente hasta la a posteriori con los cinco datos. 
 
