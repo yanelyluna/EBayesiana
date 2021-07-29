@@ -1,0 +1,17 @@
+/*
+modelo RLS
+*/
+
+model{
+#Modelo
+for(i in 1:n){
+  eta[i] <- Beta[1] + x[i]*Beta[2]
+  y[i] ~ dnorm(eta[i],Tau)
+}
+
+#Prior
+Beta ~ dmnorm(zeros, diagonal)
+Tau ~ dgamma(0.001,0.001)
+Sigma2 <- 1/Tau
+
+}
